@@ -29,20 +29,40 @@ f3 = libc.func3_return_string
 # f3.restype = c_char_p  # c_char_p is a pointer to a string
 f3.restype = POINTER(c_char_p)  # c_char_p is a pointer to a string
 
-where = f3()
+cStringAddress = f3()
 # now we have the POINTER object.  we should convert that to something we can
 # use on the python side.
-phrase = c_char_p.from_buffer_copy(where)  # deep copy of data into a ctypes buffer
-print("Python was just handed {0}({1}):{2}".format(hex(addressof(where.contents)), addressof(where.contents),phrase.value))
+phrase = c_char_p.from_buffer(cStringAddress)
+print("Python was just handed {0}({1}):{2}".format(
+    hex(addressof(cStringAddress.contents)), addressof(cStringAddress.contents),
+    phrase.value))
 
-# the memory that where points to was allocated in C, we need to return it there
-# as python's memory manager will NOT free it for us!
-# This is where the pointer we have the in where object is needed.  The POINTER
-# object stores the address of the C memory in the contents attribute.
-# NOTE: I'm still not sure why I need addressof for the .contents.  Ctypes must
-# do the conversion when passing to C that it does not do in python.
+# the memory that cStringAddress points to was allocated in C, we need to return
+# it there as python's memory manager will NOT free it for us!  This is
+# cStringAddress the pointer we have the in cStringAddress object is needed.
+# The POINTER object stores the address of the C memory in the contents
+# attribute.  NOTE: I'm still not sure why I need addressof for the .contents.
+# Ctypes must do the conversion when passing to C that it does not do in python.
 f4 = libc.func4_free_string
 f4.argtypes = [POINTER(c_char_p), ]
-print("Python is sending to C {0}({1}):{2}".format(hex(addressof(where.contents)), addressof(where.contents),phrase.value))
-f4(where.contents) # contents is the actual pointer returned
+print("Python is sending to C {0}({1}):{2}".format(
+    hex(addressof(cStringAddress.contents)), addressof(cStringAddress.contents),
+    phrase.value))
+f4(cStringAddress.contents) # contents is the actual pointer returned
+
+# The following block of code seems like it should work at first blush, but the
+# conversions going on seem to make in not possible to get the correct address
+# back to C.
+badf3 = libc.func3_return_string
+badf3.restype = c_char_p
+badPhrase = badf3()
+print(badPhrase)
+badf4 = libc.func4_free_string
+badf4.argtypes = [c_char_p, ]
+# This line will core dump as it passes a different address to C
+# badf4(badPhrase)
+f5 = libc.func5_print_but_do_not_free_string
+f5.argtypes = [c_char_p, ]
+f5(badPhrase)
+
 

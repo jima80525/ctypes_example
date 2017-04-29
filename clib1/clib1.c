@@ -21,8 +21,11 @@ char * func3_return_string(void) {
     return phrase;
 }
 
-
 void func4_free_string(char* ptr) {
     printf("         About to free %p(%ld):  %s\n", ptr, (long int)ptr, ptr);
     free(ptr);
+}
+
+void func5_print_but_do_not_free_string(char* ptr) {
+    printf("         About to free %p(%ld):  %s\n", ptr, (long int)ptr, ptr);
 }
