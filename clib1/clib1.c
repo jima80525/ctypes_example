@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int func1_no_args(void) {
@@ -14,6 +16,13 @@ void func2_string_add_one(char *input) {
 }
 
 char * func3_return_string(void) {
-    char* name = strdup("I was written in C");
-    return name;
+    char* phrase = strdup("I was written in C");
+    printf("      C just allocated %p(%ld):  %s\n", phrase, (long int)phrase, phrase);
+    return phrase;
+}
+
+
+void func4_free_string(char* ptr) {
+    printf("         About to free %p(%ld):  %s\n", ptr, (long int)ptr, ptr);
+    free(ptr);
 }
