@@ -10,4 +10,4 @@ clib1.o: clib1.c
 	gcc -c -Wall -Werror -fpic clib1.c
 
 test: clib1.so
-	./callClib1.py
+	./callclib1.py
