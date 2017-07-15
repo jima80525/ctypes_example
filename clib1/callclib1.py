@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """ Simple examples of calling C functions through ctypes module. """
 import ctypes
+import os
 
 
 def call_function_with_no_args(libc):
@@ -82,9 +83,10 @@ def call_memory_allocation(libc):
     free_func(c_string_address)  # contents is the actual pointer returned
 
 if __name__ == "__main__":
-    # load the shared library into c types.  NOTE: don't use a hard-coded path
-    # in production code, please
-    LIBC = ctypes.CDLL("./libclib1.so")
+    # load the shared library into c types.
+    libname = os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                           "libclib1.so"))
+    LIBC = ctypes.CDLL(libname)
 
     call_function_with_no_args(LIBC)
     call_string_modifier(LIBC)
