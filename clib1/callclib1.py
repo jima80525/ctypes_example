@@ -9,10 +9,10 @@ def call_function_with_no_args(libc):
         function returns a series of counting values using a static int in C.
     '''
     print("Calling simple C counting function four times:")
-    print(libc.func1_no_args())
-    print(libc.func1_no_args())
-    print(libc.func1_no_args())
-    print(libc.func1_no_args())
+    print(libc.simple_function())
+    print(libc.simple_function())
+    print(libc.simple_function())
+    print(libc.simple_function())
     print()
 
 
@@ -21,20 +21,20 @@ def call_string_modifier(libc):
         array. The python string will remain unchanged afterwards.
         Also try with the ctypes string_buffer which is mutable.
     '''
-    print("Calling C function which tries to modify python string")
+    print("Calling C function which tries to modify Python string")
     original_string = "staring string"
     print("Before:", original_string)
     # this call does not change value, even though it tries!
-    libc.func2_string_add_one(original_string)
-    print("After:", original_string)
+    libc.add_one_to_string(original_string)
+    print("After: ", original_string)
 
     # The ctypes string buffer IS mutable, however.
     print("Calling C function with mutable buffer this time")
     # need to encode the original to get bytes for string_buffer
     mutable_string = ctypes.create_string_buffer(str.encode(original_string))
     print("Before:", mutable_string.value)
-    libc.func2_string_add_one(mutable_string)  # works!
-    print("After:", mutable_string.value)
+    libc.add_one_to_string(mutable_string)  # works!
+    print("After: ", mutable_string.value)
     print()
 
 
@@ -52,7 +52,7 @@ def call_memory_allocation(libc):
     #
     # Using a ctypes.POINTER allows us to preserve that information so we can
     # free it later.
-    alloc_func = libc.func3_return_string
+    alloc_func = libc.alloc_C_string
 
     # this is a ctypes.POINTER object which holds the address of the data
     alloc_func.restype = ctypes.POINTER(ctypes.c_char)
@@ -74,7 +74,7 @@ def call_memory_allocation(libc):
     # contents attribute.  NOTE: When printing it out, you need the addressof
     # for the contents to tell python NOT to convert it to what the contents
     # pointer is pointing at.
-    free_func = libc.func4_free_string
+    free_func = libc.free_C_string
     free_func.argtypes = [ctypes.POINTER(ctypes.c_char), ]
     print("Python is sending to C {0}({1}):{2}".format(
         hex(ctypes.addressof(c_string_address.contents)),
