@@ -1,0 +1,41 @@
+https://docs.python.org/3/library/ctypes.html?highlight=ctypes
+
+There are, however, enough ways to crash Python with ctypes, so you should be
+careful anyway. The faulthandler module can be helpful in debugging crashes
+(e.g. from segmentation faults produced by erroneous C library calls).
+
+None, integers, bytes objects and (unicode) strings are the only native Python
+objects that can directly be used as parameters in these function calls. None
+is passed as a C NULL pointer, bytes objects and strings are passed as pointer
+to the memory block that contains their data (char * or wchar_t *). Python
+integers are passed as the platforms default C int type, their value is masked
+to fit into the C type.
+
+Assigning a new value to instances of the pointer types c_char_p, c_wchar_p,
+		  and c_void_p changes the memory location they point to, not the
+		  contents of the memory block (of course not, because Python bytes
+		  		  objects are immutable):
+
+You should be careful, however, not to pass them to functions expecting
+pointers to mutable memory. If you need mutable memory blocks, ctypes has
+a create_string_buffer() function which creates these in various ways. The
+current memory block contents can be accessed (or changed) with the raw
+property; if you want to access it as NUL terminated string, use the value
+property:
+
+
+main doc for ctypes:
+https://docs.python.org/3/library/ctypes.html?highlight=ctypes
+
+doc about writing extensions in C:
+https://docs.python.org/3/extending/extending.html
+
+SO discussion of bindings:
+http://stackoverflow.com/questions/10202306/python-bindings-how-does-it-work
+
+python wiki about bindings:
+https://wiki.python.org/moin/IntegratingPythonWithOtherLanguages
+
+cool tricks for ctypes
+https://www.cs.unc.edu/~gb/blog/2007/02/11/ctypes-tricks/
+
