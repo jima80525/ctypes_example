@@ -22,7 +22,7 @@ def call_string_modifier(libc):
         Also try with the ctypes string_buffer which is mutable.
     '''
     print("Calling C function which tries to modify Python string")
-    original_string = "staring string"
+    original_string = "starting string"
     print("Before:", original_string)
     # this call does not change value, even though it tries!
     libc.add_one_to_string(original_string)

@@ -1,4 +1,4 @@
-all: test doc
+all: test
 
 clean:
 	rm *.o *.so *.html
