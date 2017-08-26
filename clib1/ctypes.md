@@ -11,7 +11,74 @@ some of the basics of ctypes.  We'll cover:
 
 * Managing memory
 
-Let's start with loading a C library and calling a simple function in it.
+Let's start by taking a look with the simple C library we will be using and how
+to build it, and then jump into loading a C library and calling functions in it.
+
+The C library
+------------------------------------
+
+All of the code to build and test the examples discussed here (as well as the
+Markdown for this article) are committed to my github
+<a href="https://github.com/jima80525/ctypes_example">repo</a>.
+
+I'll walk through a little bit about the C library before we get into Ctypes.
+
+The C code is designed to be as simple as possible while demonstrating the
+concepts we're covering.  It's not intended to be useful.  Here are the functions
+we'll be using:
+
+    int simple_function(void) {
+        static int counter = 0;
+        counter++;
+        return counter;
+    }
+
+This function simply returns counting numbers.  Each time it is called in
+increments `counter` and returns that value.
+
+    void add_one_to_string(char *input) {
+        int ii = 0;
+        for (; ii < strlen(input); ii++) {
+            input[ii]++;
+        }
+    }
+
+The `add_one_to_string` function adds one to each character in a char array that
+is passed in.  We'll use this to talk about Python's immutable strings and how
+to work around them when we need to.
+
+    char * alloc_C_string(void) {
+        char* phrase = strdup("I was written in C");
+        printf("      C just allocated %p(%ld):  %s\n", phrase, (long int)phrase, phrase);
+        return phrase;
+    }
+
+    void free_C_string(char* ptr) {
+        printf("         About to free %p(%ld):  %s\n", ptr, (long int)ptr, ptr);
+        free(ptr);
+    }
+
+This pair of functions allocate and free a string in the C context.  This
+will provide the framework for talking about memory management in Ctypes.
+
+
+FInally, we need a way to build this source file into a library.  While there
+are many tools I prefer to Make, I use it for projects like this because of its
+low overhead and ubiquity.  It's on all linux-like systems.  Here's a snippet
+from the makefile which builds the c library into a .so file.
+
+    clib1.so: clib1.o
+	    gcc -shared -o libclib1.so clib1.o
+
+    clib1.o: clib1.c
+	    gcc -c -Wall -Werror -fpic clib1.c
+
+
+The makefile in the repo is set up to completely build and run the demo from
+scratch; you only need to type:
+
+    make
+
 
 Loading A Shared Library With Ctypes
 ------------------------------------
@@ -22,10 +89,10 @@ methods directly from it, provided you take care to
 
 The most basic form of this is:
 
-    from ctypes import *
+    import ctypes
 
     # load the shared library into c types.
-    libc = CDLL("./libclib1.so")
+    libc = ctypes.CDLL("./libclib1.so")
 
 Note that this assumes that your shared library is in the same directory as
 your script and that you are calling the script from that directory.  There
@@ -51,24 +118,20 @@ Simply calling a function with no parameters is trivial.  Once you have loaded
 the library, the function is just a method of the library object.
 
 
-    from ctypes import *
+    import ctypes
 
     # load the shared library into c types.
-    libc = CDLL("./libclib1.so")
+    libc = ctypes.CDLL("./libclib1.so")
 
     # simply call the function from the library
     counter = libc.simple_function()
 
 
-You'll note that the c function we're calling returns in int as shown in the
-C function prototype:
-
-    int simple_function(void);
-
-Again, ctypes makes easy things easy - passing ints around works seamlessly
+You'll remember that the c function we're calling returns counting numbers as
+ints.  Again, ctypes makes easy things easy - passing ints around works seamlessly
 and does pretty much what you expect it to.
 
-Strings as CTypes Parameters: Mutable and Immutable
+Strings as Ctypes Parameters: Mutable and Immutable
 -------------------
 
 While basic types, ints and floats, generally get marshalled by ctypes
@@ -76,18 +139,9 @@ trivially, strings pose a problem.  In Python, strings are immutable, meaning
 they cannot change.  This produces some odd behavior when passing strings in
 ctypes.
 
-For this example we have a C function which adds 1 to each letter in the
-string that is passed in:
-
-    void add_one_to_string(char *input) {
-        int ii = 0;
-        for (; ii < strlen(input); ii++) {
-            input[ii]++;
-        }
-    }
-
-If we call this passing in a Python string it runs, but does not modify the
-string as we might expect.  This Python code:
+For this example we'll use the `add_one_to_string` function shown in the C
+library above.  If we call this passing in a Python string it runs, but does
+not modify the string as we might expect.  This Python code:
 
     print("Calling C function which tries to modify Python string")
     original_string = "starting string"
@@ -102,7 +156,7 @@ results in this output:
     Before: starting string
     After:  starting string
 
-After some testing, I proved to myself that the original\_string is not
+After some testing, I proved to myself that the `original_string` is not
 available in the C function at all when doing this.  The original string was
 unchanged, mainly because the C function modified some other memory, not the
 string.  So, not only does the C function not do what you want, but it also
@@ -112,7 +166,7 @@ issues.
 If we want the C function to have access to the string we need to do a little
 marshalling work up front.  Fortunately, ctypes makes this fairly easy, too.
 
-We need to convert the original string to bytes using str.encode, and then
+We need to convert the original string to bytes using `str.encode`, and then
 pass this to the constructor for a `ctypes.string_buffer`.  `String_buffers` *are*
 mutable, and they are passed to C as a `char *` as you would expect.
 
@@ -165,8 +219,7 @@ Memory Management Basics in Ctypes
 -------------------------------------
 
 One of the great features of moving from C to Python is that you no longer
-need to spend time doing memory management (although the computer does, which
-can occasionally cause performance issues).  The golden rule when doing
+need to spend time doing manual memory management.  The golden rule when doing
 ctypes, or any cross-language marshalling is that the language that
 allocates the memory also needs to free the memory.
 
@@ -179,27 +232,14 @@ to Python for some manipulation.  This works, but you need to take a few more
 steps to ensure you can pass the memory pointer back to C so it can free it
 when we're done.
 
-For this example, I'll use these two C functions, one which allocates
-a string, and one which frees it.
-
-    char * alloc_C_string(void) {
-        char* phrase = strdup("I was written in C");
-        printf("      C just allocated %p(%ld):  %s\n", phrase, (long int)phrase, phrase);
-        return phrase;
-    }
-
-    void free_C_string(char* ptr) {
-        printf("         About to free %p(%ld):  %s\n", ptr, (long int)ptr, ptr);
-        free(ptr);
-    }
-
-Note that both functions print out the memory pointer they are manipulating to
-make it clear what is happening.
+For this example, I'll use these two C functions, `alloc_C_string` and
+`free_C_string`.  In the example code both functions print out the memory
+pointer they are manipulating to make it clear what is happening.
 
 As mentioned above, we need to be able to keep the actual pointer to the
-memory that `alloc_C_string` allocated so that we can pass it back to `free_C_string`.  To do
-this, we need to tell ctype that `alloc_C_string` should return a `ctypes.POINTER` to
-a `ctypes.c_char`.   We saw that code above.
+memory that `alloc_C_string` allocated so that we can pass it back to
+`free_C_string`.  To do this, we need to tell ctype that `alloc_C_string`
+should return a `ctypes.POINTER` to a `ctypes.c_char`.   We saw that earlier.
 
 ctypes.POINTERs are not overly useful, but they can be converted to object
 which are useful.  Once we convert our string to a ctypes.c_char, we can
@@ -233,6 +273,6 @@ Ctypes allows you to interact with C code quite easily, using a few basic
 rules to allow you to specify and call those functions.  You must be careful
 about memory management and ownership, however!
 
-If you'd like to see and play with the code I wrote while working on this,
-   please visit my github
+Remember, if you'd like to see and play with the code I wrote while working on
+this, please visit my github
 <a href="https://github.com/jima80525/ctypes_example">repo</a>.

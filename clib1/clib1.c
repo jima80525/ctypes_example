@@ -10,7 +10,6 @@ int simple_function(void) {
 
 void add_one_to_string(char *input) {
     int ii = 0;
-    printf("JHA strlen is %d\n", strlen(input));
     for (; ii < strlen(input); ii++) {
         input[ii]++;
     }
