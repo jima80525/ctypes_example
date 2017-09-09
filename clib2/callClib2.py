@@ -66,6 +66,8 @@ getPoint = libc.getPoint
 getPoint.restype = Point
 a = getPoint()
 print("Point in python is", a)
+a = getPoint()
+print("Point in python is", a)
 print()
 
 ###############################################################################
@@ -74,4 +76,8 @@ getPointPointer = libc.getPointPointer
 getPointPointer.restype = ctypes.POINTER(Point)
 a = getPointPointer()
 print("Point in python is", a)
+
+showPointRef = libc.showPointRef
+showPointRef.argtypes = [ctypes.POINTER(Point)]
+showPointRef(a)
 print()

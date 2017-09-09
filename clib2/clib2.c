@@ -9,6 +9,9 @@ static int counter = 0;
 void showPoint(Point point) {
     printf("Point in C      is (%d, %d)\n", point.x, point.y);
 }
+void showPointRef(Point *point) {
+    printf("Point in C      is (%d, %d)\n", point->x, point->y);
+}
 
 void showLine(Line line) {
     printf("Line in C      is (%d, %d)->(%d, %d)\n", line.start.x, line.start.y,
