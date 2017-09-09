@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-from ctypes import *
+import ctypes
 
 # struct Point { }
-class Point(Structure):
-    _fields_ = [('x', c_int), ('y', c_int)]
+class Point(ctypes.Structure):
+    _fields_ = [('x', ctypes.c_int), ('y', ctypes.c_int)]
 
     def __repr__(self):
         return '({0}, {1})'.format(self.x, self.y)
 
-class Line(Structure):
+class Line(ctypes.Structure):
     _fields_ = [('start', Point), ('end', Point)]
 
     def __repr__(self):
@@ -17,7 +17,7 @@ class Line(Structure):
 
 # load the shared library into c types.  NOTE: don't use a hard-coded path in
 # production code, please
-libc = CDLL("./libclib2.so")
+libc = ctypes.CDLL("./libclib2.so")
 
 ###############################################################################
 print("Pass a struct into C")
@@ -53,7 +53,7 @@ print()
 ###############################################################################
 print("Pass by reference")
 movePointRef = libc.movePointRef
-movePointRef.argtypes = [POINTER(Point)]
+movePointRef.argtypes = [ctypes.POINTER(Point)]
 a = Point(5, 6)
 print("Point in python is", a)
 movePointRef(a)
@@ -71,7 +71,7 @@ print()
 ###############################################################################
 print("Return struct pointer")
 getPointPointer = libc.getPointPointer
-getPointPointer.restype = POINTER(Point)
+getPointPointer.restype = ctypes.POINTER(Point)
 a = getPointPointer()
 print("Point in python is", a)
 print()
