@@ -1,13 +1,20 @@
-all: test
+all: point line
 
 clean:
 	rm *.o *.so
 
-libclib2.so: Point.o Line.o
+libpoint.so: Point.o
+	gcc -shared $^ -o $@
+
+libline.so: Point.o Line.o
 	gcc -shared $^ -o $@
 
 .o: .c
 	gcc -c -Wall -Werror -fpic $^
 
-test: libclib2.so
-	./callClib2.py
+point: libpoint.so
+	./testPoint.py
+
+line: libline.so
+	echo "Under construction"
+
