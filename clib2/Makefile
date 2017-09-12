@@ -3,11 +3,11 @@ all: test
 clean:
 	rm *.o *.so
 
-clib2.so: clib2.o
-	gcc -shared -o libclib2.so clib2.o
+libclib2.so: clib2.o Point.o
+	gcc -shared $^ -o $@
 
-clib2.o: clib2.c
-	gcc -c -Wall -Werror -fpic clib2.c
+.o: .c
+	gcc -c -Wall -Werror -fpic $^
 
-test: clib2.so
+test: libclib2.so
 	./callClib2.py
