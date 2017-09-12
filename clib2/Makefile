@@ -3,7 +3,7 @@ all: test
 clean:
 	rm *.o *.so
 
-libclib2.so: clib2.o Point.o
+libclib2.so: Point.o Line.o
 	gcc -shared $^ -o $@
 
 .o: .c
