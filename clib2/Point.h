@@ -8,11 +8,8 @@ typedef struct {
 } Point;
 
 void showPoint(Point point);
-void showPointRef(Point *point);
 void movePoint(Point point);
 void movePointRef(Point *point);
 Point getPoint(void);
-Point* getPointPointer(void);
-void freePointPointer(Point *point);
 
 #endif /* __POINT_H__ */

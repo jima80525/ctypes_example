@@ -1,4 +1,4 @@
-all: point line
+all: point wrappedPoint line
 
 clean:
 	rm *.o *.so
@@ -15,6 +15,8 @@ libline.so: Point.o Line.o
 point: libpoint.so
 	./testPoint.py
 
-line: libline.so
-	echo "Under construction"
+wrappedPoint: libpoint.so
+	./testWrappedPoint.py
 
+line: libline.so
+	./testLine.py
