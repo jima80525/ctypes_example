@@ -13,14 +13,12 @@ class Point(ctypes.Structure):
     _fields_ = [('x', ctypes.c_int), ('y', ctypes.c_int)]
 
     def __init__(self, lib, x=None, y=None):
-        if not x:
-            getPoint = wrapFunction(lib, 'getPoint', Point, None)
-            a = getPoint()
-            self.x = a.x
-            self.y = a.y
-        else:
+        if x:
             self.x = x
             self.y = y
+        else:
+            getPoint = wrapFunction(lib, 'getPoint', Point, None)
+            self = getPoint()
 
         self.showPointFunc = wrapFunction(lib, 'showPoint', None, [Point])
         self.movePointFunc = wrapFunction(lib, 'movePoint', None, [Point])

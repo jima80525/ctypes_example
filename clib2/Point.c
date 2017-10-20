@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include "Point.h"
 
-/* Static counter used for initializing new points */
-static int counter = 0;
-
 /* display a Point value */
 void showPoint(Point point) {
     printf("Point in C      is (%d, %d)\n", point.x, point.y);
@@ -28,6 +25,7 @@ void movePointRef(Point *point) {
 
 /* Return by value */
 Point getPoint(void) {
+    static int counter = 0;
     Point point = { counter++, counter++};
     printf("Returning Point    (%d, %d)\n", point.x, point.y);
     return point;

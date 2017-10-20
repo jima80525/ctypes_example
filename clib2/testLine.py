@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import ctypes
 import testWrappedPoint
+import testPoint
 
 
 def wrapFunction(lib, funcname, restype, argtypes):
@@ -12,8 +13,7 @@ def wrapFunction(lib, funcname, restype, argtypes):
 
 
 class Line(ctypes.Structure):
-    _fields_ = [('start', testWrappedPoint.Point),
-                ('end', testWrappedPoint.Point)]
+    _fields_ = [('start', testPoint.Point), ('end', testPoint.Point)]
 
     def __init__(self, lib):
         getLine = wrapFunction(lib, 'getLine', Line, None)
@@ -32,14 +32,6 @@ class Line(ctypes.Structure):
 
     def moveLine(self):
         self.moveLineFunc(self)
-
-    def moveLineBad(self):
-        ''' You might think this would work, but it will not.  start and end
-        are NOT of type python class Point.  They are ctype types and don't
-        maintain the attributes of the Python class.'''
-        # self.start.movePoint()
-        # self.end.movePoint()
-        pass
 
 
 class PyLine():

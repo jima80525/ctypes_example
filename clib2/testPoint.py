@@ -49,12 +49,3 @@ if __name__ == '__main__':
     movePointRef(a)
     print("Point in python is", a)
     print()
-
-    ###########################################################################
-    print("Return struct")
-    getPoint = wrapFunction(libc, 'getPoint', Point, None)
-    a = getPoint()
-    print("Point in python is", a)
-    a = getPoint()
-    print("Point in python is", a)
-    print()
