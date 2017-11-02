@@ -7,8 +7,8 @@ typedef struct {
     Point end;
 } Line;
 
-Line getLine(void);
-void showLine(Line line);
-void moveLineRef(Line *line);
+Line get_line(void);
+void show_line(Line line);
+void move_line_by_ref(Line *line);
 
 #endif /* __LINE_H__ */

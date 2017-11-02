@@ -2,7 +2,7 @@
 import ctypes
 
 
-def wrapFunction(lib, funcname, restype, argtypes):
+def wrap_function(lib, funcname, restype, argtypes):
     func = lib.__getattr__(funcname)
     func.restype = restype
     func.argtypes = argtypes
@@ -17,25 +17,26 @@ class Point(ctypes.Structure):
             self.x = x
             self.y = y
         else:
-            getPoint = wrapFunction(lib, 'getPoint', Point, None)
-            self = getPoint()
+            get_point = wrap_function(lib, 'get_point', Point, None)
+            self = get_point()
 
-        self.showPointFunc = wrapFunction(lib, 'showPoint', None, [Point])
-        self.movePointFunc = wrapFunction(lib, 'movePoint', None, [Point])
-        self.movePointRefFunc = wrapFunction(lib, 'movePointRef', None,
-                                             [ctypes.POINTER(Point)])
+        self.show_point_func = wrap_function(lib, 'show_point', None, [Point])
+        self.move_point_func = wrap_function(lib, 'move_point', None, [Point])
+        self.move_point_by_ref_func = wrap_function(lib, 'move_point_by_ref',
+                                                    None,
+                                                    [ctypes.POINTER(Point)])
 
     def __repr__(self):
         return '({0}, {1})'.format(self.x, self.y)
 
-    def showPoint(self):
-        self.showPointFunc(self)
+    def show_point(self):
+        self.show_point_func(self)
 
-    def movePoint(self):
-        self.movePointFunc(self)
+    def move_point(self):
+        self.move_point_func(self)
 
-    def movePointRef(self):
-        self.movePointRefFunc(self)
+    def move_point_by_ref(self):
+        self.move_point_by_ref_func(self)
 
 
 if __name__ == '__main__':
@@ -44,14 +45,14 @@ if __name__ == '__main__':
     print("Pass a struct into C")
     a = Point(libc, 1, 2)
     print("Point in python is", a)
-    a.showPoint()
+    a.show_point()
     print()
 
     ###########################################################################
     print("Pass by value")
     a = Point(libc, 5, 6)
     print("Point in python is", a)
-    a.movePoint()
+    a.move_point()
     print("Point in python is", a)
     print()
 
@@ -59,7 +60,7 @@ if __name__ == '__main__':
     print("Pass by reference")
     a = Point(libc, 5, 6)
     print("Point in python is", a)
-    a.movePointRef()
+    a.move_point_by_ref()
     print("Point in python is", a)
     print()
 

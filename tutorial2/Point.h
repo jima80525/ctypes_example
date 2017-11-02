@@ -7,9 +7,9 @@ typedef struct {
     int y;
 } Point;
 
-void showPoint(Point point);
-void movePoint(Point point);
-void movePointRef(Point *point);
-Point getPoint(void);
+void show_point(Point point);
+void move_point(Point point);
+void move_point_by_ref(Point *point);
+Point get_point(void);
 
 #endif /* __POINT_H__ */

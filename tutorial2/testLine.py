@@ -4,7 +4,7 @@ import testWrappedPoint
 import testPoint
 
 
-def wrapFunction(lib, funcname, restype, argtypes):
+def wrap_function(lib, funcname, restype, argtypes):
     ''' Simplify wrapping ctypes functions '''
     func = lib.__getattr__(funcname)
     func.restype = restype
@@ -16,22 +16,22 @@ class Line(ctypes.Structure):
     _fields_ = [('start', testPoint.Point), ('end', testPoint.Point)]
 
     def __init__(self, lib):
-        getLine = wrapFunction(lib, 'getLine', Line, None)
-        a = getLine()
+        get_line = wrap_function(lib, 'get_line', Line, None)
+        a = get_line()
         self.start = a.start
         self.end = a.end
-        self.showLineFunc = wrapFunction(lib, 'showLine', None, [Line])
-        self.moveLineFunc = wrapFunction(lib, 'moveLineRef', None,
-                                         [ctypes.POINTER(Line)])
+        self.show_line_func = wrap_function(lib, 'show_line', None, [Line])
+        self.move_line_func = wrap_function(lib, 'move_line_by_ref', None,
+                                            [ctypes.POINTER(Line)])
 
     def __repr__(self):
         return '{0}->{1}'.format(self.start, self.end)
 
-    def showLine(self):
-        self.showLineFunc(self)
+    def show_line(self):
+        self.show_line_func(self)
 
-    def moveLine(self):
-        self.moveLineFunc(self)
+    def move_line(self):
+        self.move_line_func(self)
 
 
 class PyLine():
@@ -42,10 +42,10 @@ class PyLine():
     def __repr__(self):
         return '{0}->{1}'.format(self.start, self.end)
 
-    def showLine(self):
+    def show_line(self):
         print("Line in Python is {0}->{1}".format(self.start, self.end))
 
-    def moveLine(self):
+    def move_line(self):
         self.start.movePoint()
         self.end.movePoint()
 
@@ -59,14 +59,14 @@ if __name__ == '__main__':
     print("Pass a nested struct into C")
     l = Line(libc)
     print("Line in python is", l)
-    l.showLine()
+    l.show_line()
     print()
 
     ###########################################################################
     print("Move Line in C")
     l = Line(libc)
     print("Line in python is", l)
-    l.moveLine()
+    l.move_line()
     print("Line in python is", l)
     print()
 
@@ -74,6 +74,6 @@ if __name__ == '__main__':
     print("Move Line in Python")
     pl = PyLine(libc)
     print("Line in python is", l)
-    l.moveLine()
+    l.move_line()
     print("Line in python is", l)
     print()

@@ -2,7 +2,7 @@
 import ctypes
 
 
-def wrapFunction(lib, funcname, restype, argtypes):
+def wrap_function(lib, funcname, restype, argtypes):
     ''' Simplify wrapping ctypes functions '''
     func = lib.__getattr__(funcname)
     func.restype = restype
@@ -25,27 +25,27 @@ if __name__ == '__main__':
 
     ###########################################################################
     print("Pass a struct into C")
-    showPoint = wrapFunction(libc, 'showPoint', None, [Point])
+    show_point = wrap_function(libc, 'show_point', None, [Point])
     a = Point(1, 2)
     print("Point in python is", a)
-    showPoint(a)
+    show_point(a)
     print()
 
     ###########################################################################
     print("Pass by value")
-    movePoint = wrapFunction(libc, 'movePoint', None, [Point])
+    move_point = wrap_function(libc, 'move_point', None, [Point])
     a = Point(5, 6)
     print("Point in python is", a)
-    movePoint(a)
+    move_point(a)
     print("Point in python is", a)
     print()
 
     ###########################################################################
     print("Pass by reference")
-    movePointRef = wrapFunction(libc, 'movePointRef', None,
-                                [ctypes.POINTER(Point)])
+    move_point_by_ref = wrap_function(libc, 'move_point_by_ref', None,
+                                      [ctypes.POINTER(Point)])
     a = Point(5, 6)
     print("Point in python is", a)
-    movePointRef(a)
+    move_point_by_ref(a)
     print("Point in python is", a)
     print()
