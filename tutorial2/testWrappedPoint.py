@@ -18,7 +18,9 @@ class Point(ctypes.Structure):
             self.y = y
         else:
             get_point = wrap_function(lib, 'get_point', Point, None)
-            self = get_point()
+            point = get_point()
+            self.x = point.x
+            self.y = point.y
 
         self.show_point_func = wrap_function(lib, 'show_point', None, [Point])
         self.move_point_func = wrap_function(lib, 'move_point', None, [Point])

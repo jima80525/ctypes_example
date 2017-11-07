@@ -1,7 +1,7 @@
 all: point wrappedPoint line
 
 clean:
-	rm *.o *.so
+	rm -f *.o *.so *.html
 
 libpoint.so: Point.o
 	gcc -shared $^ -o $@
@@ -9,7 +9,7 @@ libpoint.so: Point.o
 libline.so: Point.o Line.o
 	gcc -shared $^ -o $@
 
-.o: .c
+%.o: %.c
 	gcc -c -Wall -Werror -fpic $^
 
 point: libpoint.so
