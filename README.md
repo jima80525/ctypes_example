@@ -1,7 +1,6 @@
 # ctypes_example
-Code associated with an upcoming blog post discussing ctypes and python bindings in general.
+Code associated with an tutorials discussing ctypes and python bindings in general.
 
-The first (and so far, only) post from this material is here:
-<https://dbader.org/blog/python-ctypes-tutorial>
+The first two tutorials have been published [here](https://dbader.org/blog/python-ctypes-tutorial) and [here](https://dbader.org/blog/python-ctypes-tutorial-part-2)
 
-The second tutorial is in progress.  Code for this tutorial can be found in clib2.
+I'm hoping to write a third tutorial.  Current front-runners for topic ideas are cffi and swig.
