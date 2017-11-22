@@ -2,31 +2,18 @@
 import ctypes
 
 
-def wrap_function(lib, funcname, restype, argtypes):
-    func = lib.__getattr__(funcname)
-    func.restype = restype
-    func.argtypes = argtypes
-    return func
-
-
 class Point(ctypes.Structure):
     _fields_ = [('x', ctypes.c_int), ('y', ctypes.c_int)]
+    _libc = ctypes.CDLL("./libpoint.so")
 
-    def __init__(self, lib, x=None, y=None):
+    def __init__(self, x=None, y=None):
         if x:
             self.x = x
             self.y = y
         else:
-            get_point = wrap_function(lib, 'get_point', Point, None)
-            point = get_point()
+            point = self.get_point()
             self.x = point.x
             self.y = point.y
-
-        self.show_point_func = wrap_function(lib, 'show_point', None, [Point])
-        self.move_point_func = wrap_function(lib, 'move_point', None, [Point])
-        self.move_point_by_ref_func = wrap_function(lib, 'move_point_by_ref',
-                                                    None,
-                                                    [ctypes.POINTER(Point)])
 
     def __repr__(self):
         return '({0}, {1})'.format(self.x, self.y)
@@ -40,19 +27,30 @@ class Point(ctypes.Structure):
     def move_point_by_ref(self):
         self.move_point_by_ref_func(self)
 
+    @staticmethod
+    def wrap_function(funcname, restype, argtypes):
+        func = Point._libc.__getattr__(funcname)
+        func.restype = restype
+        func.argtypes = argtypes
+        return func
+
+Point.get_point = Point.wrap_function('get_point', Point, None)
+Point.show_point_func = Point.wrap_function('show_point', None, [Point])
+Point.move_point_func = Point.wrap_function('move_point', None, [Point])
+Point.move_point_by_ref_func = Point.wrap_function('move_point_by_ref', None,
+                                                   [ctypes.POINTER(Point)])
 
 if __name__ == '__main__':
     ###########################################################################
-    libc = ctypes.CDLL("./libpoint.so")
     print("Pass a struct into C")
-    a = Point(libc, 1, 2)
+    a = Point(1, 2)
     print("Point in python is", a)
     a.show_point()
     print()
 
     ###########################################################################
     print("Pass by value")
-    a = Point(libc, 5, 6)
+    a = Point(5, 6)
     print("Point in python is", a)
     a.move_point()
     print("Point in python is", a)
@@ -60,7 +58,7 @@ if __name__ == '__main__':
 
     ###########################################################################
     print("Pass by reference")
-    a = Point(libc, 5, 6)
+    a = Point(5, 6)
     print("Point in python is", a)
     a.move_point_by_ref()
     print("Point in python is", a)
@@ -68,11 +66,11 @@ if __name__ == '__main__':
 
     ###########################################################################
     print("Get Struct from C")
-    a = Point(libc)
+    a = Point()
     print("New Point in python (from C) is", a)
-    a = Point(libc)
+    a = Point()
     print("New Point in python (from C) is", a)
-    a = Point(libc)
+    a = Point()
     print("New Point in python (from C) is", a)
-    a = Point(libc)
+    a = Point()
     print("New Point in python (from C) is", a)
