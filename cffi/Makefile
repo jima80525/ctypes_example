@@ -25,5 +25,5 @@ line: libline.so
 	./testLine.py
 
 doc:
-	pandoc ctypes2.md > ctypes2.html
-	firefox ctypes2.html
+	pandoc cffi.md > cffi.html
+	firefox cffi.html
