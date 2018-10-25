@@ -26,7 +26,9 @@ void move_point_by_ref(Point *point) {
 /* Return by value */
 Point get_point(void) {
     static int counter = 0;
-    Point point = { counter++, counter++};
+    int x = counter ++;
+    int y = counter ++;
+    Point point = {x, y};
     printf("Returning Point    (%d, %d)\n", point.x, point.y);
     return point;
 }
