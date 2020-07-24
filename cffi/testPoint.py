@@ -3,10 +3,7 @@ import _point
 
 class Point():
     def __init__(self, x=None, y=None):
-        if x:
-            self.p = _point.lib.get_point(x, y)
-        else:
-            self.p = _point.lib.get_default_point()
+        self.p = _point.lib.get_point(x, y) if x else _point.lib.get_default_point()
         
     def __repr__(self):
         return '({0}, {1})'.format(self.p.x, self.p.y)
