@@ -22,14 +22,13 @@ class Line(ctypes.Structure):
     def move_line(self):
         self.move_line_func(self)
 
-    @staticmethod
-    def wrap_function(funcname, restype, argtypes):
+    @classmethod
+    def wrap_function(cls, funcname, restype, argtypes):
         ''' Simplify wrapping ctypes functions '''
-        func = Line._libc.__getattr__(funcname)
+        func = cls._libc.__getattr__(funcname)
         func.restype = restype
         func.argtypes = argtypes
         return func
-
 
 Line.get_line = Line.wrap_function('get_line', Line, None)
 Line.show_line_func = Line.wrap_function('show_line', None, [Line])

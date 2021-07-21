@@ -27,9 +27,9 @@ class Point(ctypes.Structure):
     def move_point_by_ref(self):
         self.move_point_by_ref_func(self)
 
-    @staticmethod
-    def wrap_function(funcname, restype, argtypes):
-        func = Point._libc.__getattr__(funcname)
+    @classmethod
+    def wrap_function(cls, funcname, restype, argtypes):
+        func = cls._libc.__getattr__(funcname)
         func.restype = restype
         func.argtypes = argtypes
         return func
