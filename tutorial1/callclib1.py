@@ -91,3 +91,8 @@ if __name__ == "__main__":
     call_function_with_no_args(LIBC)
     call_string_modifier(LIBC)
     call_memory_allocation(LIBC)
+    x = 3
+    print("PY before %d" % x)
+    print("PY before ", id(x))
+    LIBC.pass_int_ptr(id(x))
+    print("PY after %d" % x)
